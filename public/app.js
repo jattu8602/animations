@@ -23,16 +23,45 @@ function render(items) {
     const li = document.createElement("li");
     li.className = "list-item";
 
+    const title = document.createElement("div");
+    title.className = "item-title";
+    title.textContent = item.name;
+
+    const preview = document.createElement("div");
+    preview.className = "preview";
+    preview.dataset.src = item.url;
+
     const link = document.createElement("a");
+    link.className = "item-link";
     link.href = item.url;
-    link.textContent = item.name;
+    link.textContent = "Open JSON";
     link.target = "_blank";
     link.rel = "noreferrer";
 
+    li.appendChild(preview);
+    li.appendChild(title);
     li.appendChild(link);
     fragment.appendChild(li);
   });
   listEl.appendChild(fragment);
+
+  document.querySelectorAll(".preview").forEach((node) => {
+    const src = node.dataset.src;
+    if (!src || !window.lottie) {
+      return;
+    }
+    try {
+      window.lottie.loadAnimation({
+        container: node,
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        path: src,
+      });
+    } catch {
+      // If a JSON is not a valid Lottie animation, keep the empty box.
+    }
+  });
 }
 
 function filterItems() {
